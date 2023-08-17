@@ -9,10 +9,19 @@ document.addEventListener("DOMContentLoaded", function () {
     countButton.addEventListener("click", function () {
         const text = textInput.value;
 
-        // Count letters, words, and sentences
+        // Count letters
         const letters = text.replace(/[^a-zA-Z]/g, "").length;
-        const words = text.split(/\s+/).filter(word => word.length > 0).length;
-        const sentences = text.split(/[.!?]/).filter(sentence => sentence.length > 0).length;
+
+        // Count words by splitting on spaces and common punctuation, excluding standalone periods and non-word sequences
+        const words = text.split(/\s+|[,;:!\?\(\)]+/).filter(word => word.trim().length > 0 && word !== '.' && word.match(/[a-zA-Z]/)).length;
+
+        // Count sentences using a more comprehensive regex pattern
+        const sentences = text.split(/(?<=[.!?])\s+/).filter(sentence => sentence.trim().length > 0 && sentence.match(/[a-zA-Z]/)).length;
+
+        // Check if the last character is a sentence-ending punctuation or a comma
+        if ((text.trim().endsWith('.') || text.trim().endsWith(',')) && !text.trim().match(/[.!?]$/)) {
+            sentences++;
+        }
 
         // Update counts in the DOM
         letterCount.textContent = letters;
